@@ -52,12 +52,28 @@ r2b.logger-delegate-factory-class-name
 ##### Ejemplo
 ##### JUL 
 ```bash
--r2b.logger-delegate-factory-class-name=io.skerna.slog.internal.JULLogDelegateFactory
+-skerna.logger-delegate-factory-class-name=io.skerna.slog.internal.JULLogDelegateFactory
 ```
 ##### SLF4j
 ```bash
--r2b.logger-delegate-factory-class-name=io.skerna.slog.internal.SLF4JLogDelegateFactory
+-skerna.logger-delegate-factory-class-name=io.skerna.slog.internal.SLF4JLogDelegateFactory
+```
+```bash
+-skerna.logger-delegate-factory-class-name=io.skerna.slog.internal.SLF4JLogDelegateFactory
+```
+
+# Javascript
+
+Usa el default console out
+
+```kotlin
+    init {
+        LoggerFactory.setLogDelegateFactory(ConsoleLogDelegateFactory())
+        
+        val log = LoggerFactory.logger<SomeClass>()
+        log.debug("test")
+    }
 
 ```
-# Javascript
-Usa el default console out
+
+
