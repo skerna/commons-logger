@@ -52,14 +52,14 @@ r2b.logger-delegate-factory-class-name
 ##### Ejemplo
 ##### JUL 
 ```bash
--skerna.logger-delegate-factory-class-name=io.skerna.slog.internal.JULLogDelegateFactory
+-Dskerna.logger-delegate-factory-class-name=io.skerna.slog.internal.JULLogDelegateFactory
 ```
 ##### SLF4j
 ```bash
--skerna.logger-delegate-factory-class-name=io.skerna.slog.internal.SLF4JLogDelegateFactory
+-Dskerna.logger-delegate-factory-class-name=io.skerna.slog.internal.SLF4JLogDelegateFactory
 ```
 ```bash
--skerna.logger-delegate-factory-class-name=io.skerna.slog.internal.SLF4JLogDelegateFactory
+-Dskerna.logger-delegate-factory-class-name=io.skerna.slog.internal.SLF4JLogDelegateFactory
 ```
 
 # Javascript

@@ -69,15 +69,21 @@ actual object LoggerFactory {
         LoggerFactory.delegateFactory = delegateFactory
     }
 
+    @JvmStatic
     actual fun logger(clazz: KClass<*>): Logger {
         val javaClass = clazz.java
+        return logger(javaClass)
+    }
+
+    @JvmStatic
+    fun logger(clazz: Class<*>): Logger {
         val name = if (javaClass.isMemberClass)
             javaClass.enclosingClass.canonicalName
         else
-            clazz.jvmName
+            clazz.simpleName
         return logger(name)
     }
-
+    @JvmStatic
     actual fun logger(name: String): Logger {
         var logger: Logger? = loggers[name]
 
@@ -94,11 +100,11 @@ actual object LoggerFactory {
         }
         return logger
     }
-
+    @JvmStatic
     actual fun removeLogger(name: String) {
         loggers.remove(name)
     }
-
+    @JvmStatic
     actual fun setLogDelegateFactory(delegateFactory: LogDelegateFactory) {
         this.delegateFactory = delegateFactory
     }
