@@ -23,11 +23,10 @@
 package io.skerna.slog.impl
 
 
-import io.skerna.slog.LogDelegate
 import io.skerna.slog.LogDelegateFactory
 
 class SLF4JLogDelegateFactory : LogDelegateFactory {
-    override fun createDelegate(name: String): LogDelegate {
+    override fun createDelegate(name: String): SLF4JLogDelegate {
         return SLF4JLogDelegate(name)
     }
 

@@ -10,7 +10,6 @@ del destino de compilación.
 - NodeJs  [Console.log]
 - Browsers [Console.log]
  
-### Uso
 
 ```kotlin
     class HotelService{
@@ -74,6 +73,46 @@ Usa el default console out
         log.debug("test")
     }
 
+```
+
+
+### CONFIGURACIÓN JVM SLF4J && LOG4J2
+
+```kotlin
+    api("io.skerna.libs:skerna-slogs-jvm:${versionSlogs}")
+    api("org.slf4j:slf4j-api:1.7.5")
+    api("org.apache.logging.log4j:log4j-core:2.11.2")
+    api("org.apache.logging.log4j:log4j-slf4j-impl:2.11.2")
+```
+Config Log4j2
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logPath">target/cucumber-logs</Property>
+        <Property name="rollingFileName">cucumber</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+        </Console>
+        <RollingFile name="rollingFile" fileName="${logPath}/${rollingFileName}.log" filePattern="${logPath}/${rollingFileName}_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="DEBUG" additivity="false">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="rollingFile" />
+        </Root>
+    </Loggers>
+</Configuration>
 ```
 
 

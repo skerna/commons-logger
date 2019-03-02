@@ -22,4 +22,4 @@
 
 package io.skerna.slog
 
-const val LOGGER_DELEGATE_FACTORY_CLASS_NAME = "skerna.logger-delegate-factory-class-name"
+const val LOGGER_DELEGATE_FACTORY_CLASS_NAME = "skerna.logger"

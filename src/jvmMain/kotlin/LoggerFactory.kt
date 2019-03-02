@@ -22,13 +22,18 @@
 
 package io.skerna.slog
 
+import io.skerna.ansicolor.cyan
+import io.skerna.ansicolor.underline
 import io.skerna.ansicolor.yellow
 import io.skerna.slog.impl.JULLogDelegateFactory
+import io.skerna.slog.impl.Log4j2LogDelegateFactory
+import io.skerna.slog.impl.SLF4JLogDelegateFactory
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.jvmName
 
 actual object LoggerFactory {
+    val VERTX_DELEGATE_LOGSYS_PROP = "vertx.logger-delegate-factory-class-name"
+
     @Volatile
     private var delegateFactory: LogDelegateFactory? = null
 
@@ -65,8 +70,28 @@ actual object LoggerFactory {
         } else {
             delegateFactory = JULLogDelegateFactory()
         }
-
+        //configureTargetLogger(delegateFactory)
         LoggerFactory.delegateFactory = delegateFactory
+    }
+
+    /**
+     * permite confugurar el delegate Log system para vertx
+     */
+    private fun configureTargetLogger(delegate: LogDelegateFactory) {
+        if (System.getProperty(VERTX_DELEGATE_LOGSYS_PROP).isNullOrEmpty()) {
+            println("Vertx Logger intialize from SKERNA".cyan())
+            when (delegate) {
+                is Log4j2LogDelegateFactory -> {
+                    System.setProperty(VERTX_DELEGATE_LOGSYS_PROP, "io.vertx.core.logging.Log4j2LogDelegateFactory")
+                }
+                is SLF4JLogDelegateFactory -> {
+                    System.setProperty(VERTX_DELEGATE_LOGSYS_PROP, "io.vertx.core.logging.SLF4JLogDelegateFactory")
+                }
+                else -> {
+                    System.setProperty(VERTX_DELEGATE_LOGSYS_PROP, "io.vertx.core.logging.JULLogDelegateFactory")
+                }
+            }
+        }
     }
 
     @JvmStatic
@@ -83,6 +108,7 @@ actual object LoggerFactory {
             clazz.simpleName
         return logger(name)
     }
+
     @JvmStatic
     actual fun logger(name: String): Logger {
         var logger: Logger? = loggers[name]
@@ -100,12 +126,16 @@ actual object LoggerFactory {
         }
         return logger
     }
+
     @JvmStatic
     actual fun removeLogger(name: String) {
         loggers.remove(name)
     }
+
     @JvmStatic
     actual fun setLogDelegateFactory(delegateFactory: LogDelegateFactory) {
+      //  configureTargetLogger(delegateFactory)
+        System.setProperty(LOGGER_DELEGATE_FACTORY_CLASS_NAME,delegateFactory.javaClass.canonicalName)
         this.delegateFactory = delegateFactory
     }
 

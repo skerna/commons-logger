@@ -22,6 +22,9 @@
 
 package io.skerna.slog
 
+import io.skerna.slog.impl.JULLogDelegateFactory
+import io.skerna.slog.impl.SLF4JLogDelegateFactory
+
 /**
  * Logger provider context, espera que la implementación
  * esepcifica de la plataforma para los casos de prueba retorne

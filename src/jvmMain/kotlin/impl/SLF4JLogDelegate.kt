@@ -26,35 +26,25 @@ package io.skerna.slog.impl
 import io.skerna.slog.LogDelegate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.helpers.MessageFormatter
-import org.slf4j.spi.LocationAwareLogger
 import org.slf4j.spi.LocationAwareLogger.*
 
 
 class SLF4JLogDelegate : LogDelegate {
-
+    private val FQCN = Logger::class.java.canonicalName
     private val logger: Logger
 
-    override val isWarnEnabled: Boolean
-        get() = logger.isWarnEnabled
-
-    override val isInfoEnabled: Boolean
-        get() = logger.isInfoEnabled
-
-    override val isDebugEnabled: Boolean
-        get() = logger.isDebugEnabled
-
-    override val isTraceEnabled: Boolean
-        get() = logger.isTraceEnabled
-
-    internal constructor(name: String) {
+    constructor(name: String) {
         logger = LoggerFactory.getLogger(name)
     }
 
-    constructor(logger: Any) {
-        this.logger = logger as Logger
-
-    }
+    override val isWarnEnabled: Boolean
+        get() = logger.isWarnEnabled
+    override val isInfoEnabled: Boolean
+        get() = logger.isInfoEnabled
+    override val isDebugEnabled: Boolean
+        get() = logger.isDebugEnabled
+    override val isTraceEnabled: Boolean
+        get() = logger.isTraceEnabled
 
     override fun fatal(message: Any) {
         log(ERROR_INT, message)
@@ -69,7 +59,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun error(message: Any, vararg params: Any) {
-        log(ERROR_INT, message, null, *params)
+        log(ERROR_INT, message, null, params)
     }
 
     override fun error(message: Any, t: Throwable) {
@@ -77,7 +67,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun error(message: Any, t: Throwable, vararg params: Any) {
-        log(ERROR_INT, message, t, *params)
+        log(ERROR_INT, message, t, params)
     }
 
     override fun warn(message: Any) {
@@ -85,7 +75,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun warn(message: Any, vararg params: Any) {
-        log(WARN_INT, message, null, *params)
+        log(WARN_INT, message, null, params)
     }
 
     override fun warn(message: Any, t: Throwable) {
@@ -93,7 +83,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun warn(message: Any, t: Throwable, vararg params: Any) {
-        log(WARN_INT, message, t, *params)
+        log(WARN_INT, message, t, params)
     }
 
     override fun info(message: Any) {
@@ -101,7 +91,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun info(message: Any, vararg params: Any) {
-        log(INFO_INT, message, null, *params)
+        log(INFO_INT, message, null, params)
     }
 
     override fun info(message: Any, t: Throwable) {
@@ -109,7 +99,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun info(message: Any, t: Throwable, vararg params: Any) {
-        log(INFO_INT, message, t, *params)
+        log(INFO_INT, message, t, params)
     }
 
     override fun debug(message: Any) {
@@ -117,7 +107,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun debug(message: Any, vararg params: Any) {
-        log(DEBUG_INT, message, null, *params)
+        log(DEBUG_INT, message, null, params)
     }
 
     override fun debug(message: Any, t: Throwable) {
@@ -125,7 +115,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun debug(message: Any, t: Throwable, vararg params: Any) {
-        log(DEBUG_INT, message, t, *params)
+        log(DEBUG_INT, message, t, params)
     }
 
     override fun trace(message: Any) {
@@ -133,7 +123,7 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun trace(message: Any, vararg params: Any) {
-        log(TRACE_INT, message, null, *params)
+        log(TRACE_INT, message, null, params)
     }
 
     override fun trace(message: Any, t: Throwable) {
@@ -141,61 +131,41 @@ class SLF4JLogDelegate : LogDelegate {
     }
 
     override fun trace(message: Any, t: Throwable, vararg params: Any) {
-        log(TRACE_INT, message, t, *params)
+        log(TRACE_INT, message, t, params)
     }
 
+    private fun log(level: Int, message: Any) {
+        log(level, message, null)
+    }
 
-    private fun log(level: Int, message: Any? = null, t: Throwable? = null, vararg params: Any) {
+    private fun log(level: Int, message: Any, t: Throwable?) {
+        log(level, message, t, "")
+    }
+
+    private fun log(level: Int, message: Any?, t: Throwable?, vararg params: Any) {
         val msg = message?.toString() ?: "NULL"
 
-
-        // We need to compute the right parameters.
-        // If we have both parameters and an error, we need to build a new array [params, t]
-        // If we don't have parameters, we need to build a new array [t]
-        // If we don't have error, it's just params.
-        var parameters = params
-
-        if (params.isNotEmpty() && t != null) {
-
-            parameters = arrayOf<Any>(params.size + 1)
-            System.arraycopy(params, 0, parameters, 0, params.size)
-            parameters[params.size] = t
-
+        var parameters = params.toMutableList()
+        if (!params.isEmpty() && t != null) {
+            parameters = params.toMutableList()
+            parameters.add(t)
         } else if (params.isEmpty() && t != null) {
-
-            parameters = arrayOf<Any>(t)
+            parameters = mutableListOf<Any>(t)
 
         }
 
-        if (logger is LocationAwareLogger) {
-            // make sure we don't format the objects if we don't log the line anyway
-            if (level == TRACE_INT && logger.isTraceEnabled() ||
-                    level == DEBUG_INT && logger.isDebugEnabled() ||
-                    level == INFO_INT && logger.isInfoEnabled() ||
-                    level == WARN_INT && logger.isWarnEnabled() ||
-                    level == ERROR_INT && logger.isErrorEnabled()) {
-                val ft = MessageFormatter.arrayFormat(msg, parameters)
-                logger.log(null, FQCN, level, ft.message, null, ft.throwable)
-            }
-        } else {
-            when (level) {
-                TRACE_INT -> logger.trace(msg, parameters)
-                DEBUG_INT -> logger.debug(msg, parameters)
-                INFO_INT -> logger.info(msg, parameters)
-                WARN_INT -> logger.warn(msg, parameters)
-                ERROR_INT -> logger.error(msg, parameters)
-                else -> {
-                    throw IllegalStateException("Unknown log level $level")
-                }
-            }
+
+        when (level) {
+            TRACE_INT -> logger.trace(msg, parameters)
+            DEBUG_INT -> logger.debug(msg, parameters)
+            INFO_INT -> logger.info(msg, parameters)
+            WARN_INT -> logger.warn(msg, parameters)
+            ERROR_INT -> logger.error(msg, parameters)
+            else -> throw IllegalArgumentException("Unknown log level $level")
         }
     }
 
     override fun unwrap(): Any? {
         return logger
-    }
-
-    companion object {
-        private val FQCN = Logger::class.java.canonicalName
     }
 }
