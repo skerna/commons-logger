@@ -16,19 +16,25 @@ configurations {
     compileClasspath
 }
 
+
 kotlin {
-    targets {
-        //fromPreset(presets.android, 'android')
-
-        fromPreset(presets.jvm, 'jvm')
-
-        fromPreset(presets.js, 'js')
+    jvm(){
+        compilations.main.kotlinOptions {
+            // Setup the Kotlin compiler options for the 'main' compilation:
+            jvmTarget = "1.8"
+        }
+        compilations.test.kotlinOptions {
+            // Setup the Kotlin compiler options for the 'main' compilation:
+            jvmTarget = "1.8"
+        }
     }
+    js()
+
     sourceSets {
         commonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                api("io.skerna.libs:skerna-sansi-metadata:$skernaVersion")
+                api("io.skerna.commons:skerna-sansi-metadata:$skernaVersion")
             }
         }
         commonTest {
@@ -40,13 +46,14 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-                implementation 'org.jetbrains.kotlin:kotlin-reflect:1.3.11'
-                api("io.skerna.libs:skerna-sansi-jvm:$skernaVersion")
+                api 'org.jetbrains.kotlin:kotlin-reflect'
+                api("io.skerna.commons:skerna-sansi-jvm:$skernaVersion")
                 compileOnly "org.slf4j:slf4j-simple:1.7.25"
                 compileOnly "org.slf4j:slf4j-api:1.7.25"
                 compileOnly "org.apache.logging.log4j:log4j-api:2.8.2"
                 compileOnly "org.apache.logging.log4j:log4j-core:2.8.2"
-                compileOnly "io.vertx:vertx-core:3.6.1"
+                compileOnly "io.vertx:vertx-core:3.6.3"
+
             }
         }
         jvmTest {
@@ -58,12 +65,13 @@ kotlin {
                 implementation 'org.apache.logging.log4j:log4j-core:2.11.0'
                 implementation 'org.apache.logging.log4j:log4j-api:2.11.0'
                 implementation "io.vertx:vertx-core:3.6.1"
+
             }
         }
         jsMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                api("io.skerna.libs:skerna-sansi-js:$skernaVersion")
+                api("io.skerna.commons:skerna-sansi-js:$skernaVersion")
             }
         }
         jsTest {

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c)  2019  SKERNA
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<Configuration status="ERROR" packages="io.skerna.commons.logger">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT" follow="true">
+            <!-- <PatternLayout
+                     pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />-->
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{[%-5level]}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green bold, DEBUG=blue bold, TRACE=blue bold}--%style{%-28.28t{1}}{magenta} %style{%-20.30c{1.} %style{[%3.3L]}: }{cyan,bold} %msg%n"/>
+        </Console>
+        <TestAppender name="TestAppender">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{[%-5level]}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green bold, DEBUG=blue bold, TRACE=blue bold}--%style{%-28.28t{1}}{magenta} %style{%-20.30c{1.} %style{[%3.3L]}: }{cyan,bold} %msg%n"/>
+        </TestAppender>
+    </Appenders>
+    <Loggers>
+        <Root level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Root>
+        <Logger name="io.skerna.commons.logger" level="ALL" additivity="false"  includeLocation="true">
+            <AppenderRef ref="console"></AppenderRef>
+            <AppenderRef ref="TestAppender" level="All"/>
+        </Logger>
+    </Loggers>
+</Configuration>
