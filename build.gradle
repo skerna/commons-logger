@@ -34,7 +34,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                api("io.skerna.commons:commons-sansi-metadata:$skernaVersion")
+                api("com.gitlab.skerna.libs:commons-sansi-metadata:$skernaVersion")
             }
         }
         commonTest {
@@ -47,7 +47,7 @@ kotlin {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
                 api 'org.jetbrains.kotlin:kotlin-reflect'
-                api("io.skerna.commons:commons-sansi-jvm:$skernaVersion")
+                api("com.gitlab.skerna.libs:commons-sansi-jvm:$skernaVersion")
                 compileOnly "org.slf4j:slf4j-simple:1.7.25"
                 compileOnly "org.slf4j:slf4j-api:1.7.25"
                 compileOnly "org.apache.logging.log4j:log4j-api:2.8.2"
@@ -71,7 +71,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                api("io.skerna.commons:commons-sansi-js:$skernaVersion")
+                api("com.gitlab.skerna.libs:commons-sansi-js:$skernaVersion")
             }
         }
         jsTest {
