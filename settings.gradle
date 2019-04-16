@@ -11,9 +11,9 @@ def isUncluded = gradle.parent != null
 if(isUncluded) {
     includeBuild("../commons-sansi"){
         dependencySubstitution {
-            substitute module('com.gitlab.skerna.libs:commons-sansi-metadata') with project(':')
-            substitute module('com.gitlab.skerna.libs:commons-sansi-jvm') with project(':')
-            substitute module('com.gitlab.skerna.libs:commons-sansi-js') with project(':')
+            substitute module('io.skerna.libs:commons-sansi-metadata') with project(':')
+            substitute module('io.skerna.libs:commons-sansi-jvm') with project(':')
+            substitute module('io.skerna.libs:commons-sansi-js') with project(':')
         }
     }
 }

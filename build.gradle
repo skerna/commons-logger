@@ -1,5 +1,6 @@
 plugins {
     id 'kotlin-multiplatform'
+    id "com.jfrog.bintray" version "1.8.4"
 }
 apply plugin: 'kotlin-dce-js'
 
@@ -7,7 +8,7 @@ repositories {
     mavenCentral()
     maven { url "https://kotlin.bintray.com/kotlinx" }
     maven { url "https://kotlin.bintray.com/kotlin-dev" }
-    maven { url "https://jitpack.io" }
+    maven { url  "https://dl.bintray.com/skerna/maven" }
 }
 
 apply plugin: "maven-publish"
@@ -35,7 +36,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                api("com.gitlab.skerna.libs:commons-sansi-metadata:$skernaVersion")
+                api("io.skerna.libs:commons-sansi-metadata:$skernaVersion")
             }
         }
         commonTest {
@@ -48,7 +49,7 @@ kotlin {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
                 api 'org.jetbrains.kotlin:kotlin-reflect'
-                api("com.gitlab.skerna.libs:commons-sansi-jvm:$skernaVersion")
+                api("io.skerna.libs:commons-sansi-jvm:$skernaVersion")
                 compileOnly "org.slf4j:slf4j-simple:1.7.25"
                 compileOnly "org.slf4j:slf4j-api:1.7.25"
                 compileOnly "org.apache.logging.log4j:log4j-api:2.8.2"
@@ -72,7 +73,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                api("com.gitlab.skerna.libs:commons-sansi-js:$skernaVersion")
+                api("io.skerna.libs:commons-sansi-js:$skernaVersion")
             }
         }
         jsTest {
@@ -84,3 +85,4 @@ kotlin {
         }
     }
 }
+apply from: "./gradle/publish.gradle"
