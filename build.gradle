@@ -23,11 +23,11 @@ kotlin {
     jvm(){
         compilations.main.kotlinOptions {
             // Setup the Kotlin compiler options for the 'main' compilation:
-            jvmTarget = "1.8"
+            jvmTarget = "1.6"
         }
         compilations.test.kotlinOptions {
             // Setup the Kotlin compiler options for the 'main' compilation:
-            jvmTarget = "1.8"
+            jvmTarget = "1.6"
         }
     }
     js()
