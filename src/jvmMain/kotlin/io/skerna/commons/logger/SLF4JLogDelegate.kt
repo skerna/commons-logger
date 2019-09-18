@@ -28,26 +28,28 @@ import org.slf4j.LoggerFactory
 import org.slf4j.spi.LocationAwareLogger.*
 
 
-class SLF4JLogDelegate : LogDelegate {
+class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelegate(name) {
     private val FQCN = Logger::class.java.canonicalName
     protected val logger: Logger
 
-    constructor(name: String) {
+    init {
         logger = LoggerFactory.getLogger(name)
     }
 
     override val isWarnEnabled: Boolean
-        get() = logger.isWarnEnabled
+        get() = logger.isWarnEnabled || LoggerContext.isWarnEnabled()
+
     override val isInfoEnabled: Boolean
-        get() = logger.isInfoEnabled
+        get() = logger.isInfoEnabled || LoggerContext.isInfoEnabled()
+
     override val isDebugEnabled: Boolean
-        get() = logger.isDebugEnabled
+        get() = logger.isDebugEnabled || LoggerContext.isDebugEnabled()
+
     override val isTraceEnabled: Boolean
-        get() = logger.isTraceEnabled
+        get() = logger.isTraceEnabled || LoggerContext.isTraceEnabled()
 
     override fun fatal(message: Any) {
         log(ERROR_INT, message)
-
     }
 
     override fun fatal(message: Any, t: Throwable) {
@@ -144,7 +146,7 @@ class SLF4JLogDelegate : LogDelegate {
 
     private fun log(level: Int, message: Any?, t: Throwable?, params:Array<out Any?>) {
         val msg = message?.toString() ?: "NULL"
-
+        
         if (!params.isEmpty() && t != null) {
             when (level) {
                 TRACE_INT -> logger.trace(msg, *params,t)
@@ -183,7 +185,20 @@ class SLF4JLogDelegate : LogDelegate {
         }
         return this!!;
     }
-    override fun unwrap(): Any? {
+    override fun unwrap(): Any {
         return logger
+    }
+
+    override fun isLoggable(level: Level): Boolean {
+        if(level == Level.INFO && isInfoEnabled){
+            return true
+        }else if(level == Level.WARNING && isWarnEnabled){
+            return true
+        }else if(level == Level.DEBUG && isDebugEnabled) {
+            return true
+        }else if(level == Level.TRACE && isTraceEnabled){
+            return true
+        }
+        return false
     }
 }

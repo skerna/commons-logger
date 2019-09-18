@@ -22,134 +22,127 @@
 
 package io.skerna.commons.logger
 
-import io.skerna.commons.sansi.cyan
-import io.skerna.commons.sansi.red
-import io.skerna.commons.sansi.yellow
 
-class PrintLogDelegate constructor(name: String) : AbstractLoggerDelegate(name){
+import io.skerna.commons.logger.LogDelegate
+import io.vertx.core.logging.LoggerFactory
+import io.vertx.core.logging.Logger as VLogger
+
+class VertxLoggerDelegate : LogDelegate {
+
+    private val logger: VLogger
 
     override val isWarnEnabled: Boolean
-        get() = LoggerContext.isWarnEnabled()
+        get() = logger.isWarnEnabled
+
     override val isInfoEnabled: Boolean
-        get() = LoggerContext.isInfoEnabled()
+        get() = logger.isInfoEnabled
+
     override val isDebugEnabled: Boolean
-        get() = LoggerContext.isDebugEnabled()
+        get() = logger.isDebugEnabled
+
     override val isTraceEnabled: Boolean
-        get() = LoggerContext.isTraceEnabled()
+        get() = logger.isTraceEnabled
 
+    internal constructor(name: String) {
+        logger = LoggerFactory.getLogger(name)
+    }
 
+    constructor(logger: Any) {
+        this.logger = logger as VLogger
+
+    }
 
     override fun fatal(message: Any) {
-        println(formatMessage(message).red())
+        logger.fatal(message)
     }
 
     override fun fatal(message: Any, t: Throwable) {
-        println(formatMessage(message, t).red())
+        logger.fatal(message, t)
     }
 
     override fun error(message: Any) {
-        println(formatMessage(message).red())
+        logger.error(message)
     }
 
     override fun error(message: Any, vararg params: Any) {
-        println("$message ${params.contentToString()}".red())
+        logger.error(message, params)
     }
 
     override fun error(message: Any, t: Throwable) {
-        println(formatMessage(message, t).red())
+        logger.error(message, t)
     }
 
     override fun error(message: Any, t: Throwable, vararg params: Any) {
-        println(formatMessage("$message ${params.contentToString()}", t).red())
+        logger.error(message, t, params)
     }
 
     override fun warn(message: Any) {
-        println(formatMessage(message).yellow())
+        logger.warn(message)
     }
 
     override fun warn(message: Any, vararg params: Any) {
-        println("$message ${params.contentToString()}".yellow())
-
+        logger.warn(message, params)
     }
 
     override fun warn(message: Any, t: Throwable) {
-        println(formatMessage(message, t).yellow())
+        logger.warn(message, t)
     }
 
     override fun warn(message: Any, t: Throwable, vararg params: Any) {
-        println(formatMessage("$message ${params.contentToString()}", t).yellow())
+        logger.warn(message, t, params)
     }
 
     override fun info(message: Any) {
-        println(formatMessage(message).cyan())
+        logger.info(message)
     }
 
     override fun info(message: Any, vararg params: Any) {
-        println("$message ${params.contentToString()}".cyan())
+        logger.info(message, params)
     }
 
     override fun info(message: Any, t: Throwable) {
-        println(formatMessage(message, t).cyan())
+        logger.info(message, t)
     }
 
     override fun info(message: Any, t: Throwable, vararg params: Any) {
-        println(formatMessage("$message ${params.contentToString()}", t).cyan())
+        logger.info(message, t, params)
     }
 
-
     override fun debug(message: Any) {
-        println(formatMessage(message).cyan())
+        logger.debug(message)
     }
 
     override fun debug(message: Any, vararg params: Any) {
-        println("$message ${params.contentToString()}".cyan())
+        logger.debug(message, params)
     }
 
     override fun debug(message: Any, t: Throwable) {
-        println(formatMessage(message, t).cyan())
+        logger.debug(message, t)
     }
 
     override fun debug(message: Any, t: Throwable, vararg params: Any) {
-        println(formatMessage("$message ${params.contentToString()}", t).cyan())
+        logger.debug(message, t, params)
     }
 
     override fun trace(message: Any) {
-        println(formatMessage(message).cyan())
+        logger.trace(message)
     }
 
     override fun trace(message: Any, vararg params: Any) {
-        println("$message ${params.contentToString()}".cyan())
+        logger.trace(message, params)
+
     }
 
     override fun trace(message: Any, t: Throwable) {
-        println(formatMessage(message, t).cyan())
+        logger.trace(message, t)
     }
 
     override fun trace(message: Any, t: Throwable, vararg params: Any) {
-        println(formatMessage("$message ${params.contentToString()}", t).cyan())
+        logger.trace(message, t, params)
     }
 
-
-    private fun formatMessage(message: Any): String {
-        return "${this.name} : $message"
+    override fun unwrap(): Any? {
+        return logger
     }
 
-    private fun formatMessage(message: Any, t: Throwable): String {
-        return "${this.name} : $message, cause $t"
-    }
-
-    override fun isLoggable(level: Level): Boolean {
-        if(level == Level.INFO && isInfoEnabled){
-            return true
-        }else if(level == Level.WARNING && isWarnEnabled){
-            return true
-        }else if(level == Level.DEBUG && isDebugEnabled) {
-            return true
-        }
-        return false
-    }
-
-    override fun unwrap(): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }

@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
  * project: skerna-commons created at 25/03/19
  */
 class AppenderTest{
-    lateinit var appender:TestAppender
+    lateinit var appender:  TestAppender
     lateinit var logger: Logger
     @Before
     fun setup(){

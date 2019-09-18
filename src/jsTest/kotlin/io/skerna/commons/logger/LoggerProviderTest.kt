@@ -22,9 +22,6 @@
 
 package io.skerna.commons.logger
 
-import io.skerna.commons.logger.Logger
-import io.skerna.commons.logger.LoggerFactory
-
 /**
  * Logger provider context, espera que la implementación
  * esepcifica de la plataforma para los casos de prueba retorne

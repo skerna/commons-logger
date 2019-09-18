@@ -37,11 +37,11 @@ public class ListAppender extends AbstractAppender {
 
     // Use Collections.synchronizedList rather than CopyOnWriteArrayList because we expect
     // more frequent writes than reads.
-    final List<LogEvent> events = Collections.synchronizedList(new ArrayList<>());
+    final List<LogEvent> events = Collections.synchronizedList(new ArrayList<LogEvent>());
 
-    private final List<String> messages = Collections.synchronizedList(new ArrayList<>());
+    private final List<String> messages = Collections.synchronizedList(new ArrayList<String>());
 
-    final List<byte[]> data = Collections.synchronizedList(new ArrayList<>());
+    final List<byte[]> data = Collections.synchronizedList(new ArrayList<byte[]>());
 
     private final boolean newLine;
 

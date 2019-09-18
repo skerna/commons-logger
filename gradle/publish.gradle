@@ -9,7 +9,21 @@ task stubJavadoc(type: Jar) {
 }
 
 
+
 publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId = project.group
+            artifactId "${project.name}-android"
+            version = project.version
+            artifact("$buildDir/outputs/aar/bar-release.aar")
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                generatePomDeps(configurations.androidApi,dependenciesNode)
+                generatePomDeps(configurations.androidImplementation,dependenciesNode)
+            }
+        }
+    }
     publications.all {
         pom.withXml(configureMavenCentralMetadata)
     }

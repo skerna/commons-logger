@@ -1,7 +1,7 @@
 {
   "name": "$scope_npm_package/$project.name",
   "version": "$version",
-  "description": "Loggin for javascript",
+  "description": "Skerna Logger multiplatforma",
   "main": "r2b-slog.js",
   "author": "R2B",
   "license": "Apache-2.0",

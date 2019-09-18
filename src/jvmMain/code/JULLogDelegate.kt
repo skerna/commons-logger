@@ -31,7 +31,7 @@ import java.util.logging.LogRecord
 /**
  * A [LogDelegate] which delegates to java.util.logging
  */
-class JULLogDelegate internal constructor(name: String) : LogDelegate {
+class JULLogDelegate internal constructor(name: String) : AbstractLogger() {
     private val logger: java.util.logging.Logger
 
     override val isWarnEnabled: Boolean

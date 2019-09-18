@@ -22,12 +22,9 @@
 
 package io.skerna.commons.logger
 
-import io.skerna.commons.sansi.cyan
 import io.skerna.commons.sansi.yellow
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
-
-const val VERTX_DELEGATE_LOGSYS_PROP = "vertx.logger-delegate-factory-class-name"
 
 actual object LoggerFactory {
 
@@ -48,7 +45,7 @@ actual object LoggerFactory {
         // programmatically - this is primarily of use so we can configure the logger delegate on the client side.
         // call to System.getProperty is wrapped in a try block as it will fail if the client runs in a secured
         // environment
-        var className: String? = PrintDelegateFactory::class.java.name
+        var className: String? = ALogDelegte::class.java.name
         try {
             className = System.getProperty(LOGGER_DELEGATE_FACTORY_CLASS_NAME)
         } catch (e: Exception) {
@@ -65,7 +62,7 @@ actual object LoggerFactory {
             }
 
         } else {
-            delegateFactory = PrintDelegateFactory()
+            delegateFactory = ALogDelegateFactory()
         }
         configureTargetLogger(delegateFactory)
         LoggerFactory.delegateFactory = delegateFactory
@@ -74,21 +71,8 @@ actual object LoggerFactory {
     /**
      * permite confugurar el delegate Log system para vertx
      */
-    private fun configureTargetLogger(delegate: LogDelegateFactory) {
-        /**if (System.getProperty(VERTX_DELEGATE_LOGSYS_PROP).isNullOrEmpty()) {
-            when (delegate) {
-                is PrintDelegateFactory -> {
-                    System.setProperty(VERTX_DELEGATE_LOGSYS_PROP, "io.vertx.core.logging.Log4j2LogDelegateFactory")
-                }
-                is SLF4JLogDelegateFactory -> {
-                    System.setProperty(VERTX_DELEGATE_LOGSYS_PROP, "io.vertx.core.logging.SLF4JLogDelegateFactory")
-                }
-                else -> {
-                    System.setProperty(VERTX_DELEGATE_LOGSYS_PROP, "io.vertx.core.logging.JULLogDelegateFactory")
-                }
-            }
-        }
-        println("Vertx Logger intialize from SKERNA ${System.getProperty(VERTX_DELEGATE_LOGSYS_PROP)}".cyan())**/
+    private fun configureTargetLogger(delegateFactory: LogDelegateFactory) {
+        this.delegateFactory = delegateFactory
     }
 
     @JvmStatic
@@ -100,10 +84,10 @@ actual object LoggerFactory {
     @JvmStatic
     fun logger(clazz: Class<*>): Logger {
         val name = if (javaClass.isMemberClass)
-            javaClass.enclosingClass.canonicalName
+            javaClass.enclosingClass!!.canonicalName
         else
             clazz.canonicalName
-        return logger(name)
+        return logger(name!!)
     }
 
     @JvmStatic

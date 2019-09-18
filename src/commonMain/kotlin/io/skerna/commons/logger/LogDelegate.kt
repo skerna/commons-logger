@@ -22,7 +22,12 @@
 
 package io.skerna.commons.logger
 
-interface LogDelegate {
+interface LogDelegate:LogLevels.Debug,
+        LogLevels.Info,
+        LogLevels.Warning,
+        LogLevels.Error,
+        LogLevels.Fatal,
+        LogLevels.Trace{
 
     val isWarnEnabled: Boolean
 
@@ -32,54 +37,24 @@ interface LogDelegate {
 
     val isTraceEnabled: Boolean
 
-    fun fatal(message: Any)
+    fun log(level:Level, message:String)
 
-    fun fatal(message: Any, t: Throwable)
+    fun log(level:Level,message: String, exception: Throwable)
 
-    fun error(message: Any)
+    fun log(level:Level,message: String, vararg params:Any)
 
-    fun error(message: Any, vararg params: Any)
+    fun log(level:Level,exception: Throwable, message: String, vararg params: Array<Any>)
 
-    fun error(message: Any, t: Throwable)
+    fun getLoggerName():String
 
-    fun error(message: Any, t: Throwable, vararg params: Any)
-
-    fun warn(message: Any)
-
-    fun warn(message: Any, vararg params: Any)
-
-    fun warn(message: Any, t: Throwable)
-
-    fun warn(message: Any, t: Throwable, vararg params: Any)
-
-    fun info(message: Any)
-
-    fun info(message: Any, vararg params: Any)
-
-    fun info(message: Any, t: Throwable)
-
-    fun info(message: Any, t: Throwable, vararg params: Any)
-
-    fun debug(message: Any)
-
-    fun debug(message: Any, vararg params: Any)
-
-    fun debug(message: Any, t: Throwable)
-
-    fun debug(message: Any, t: Throwable, vararg params: Any)
-
-    fun trace(message: Any)
-
-    fun trace(message: Any, vararg params: Any)
-
-    fun trace(message: Any, t: Throwable)
-
-    fun trace(message: Any, t: Throwable, vararg params: Any)
-
+    fun isLoggable(level: Level):Boolean
     /**
      * @return the underlying framework logger object, null in the default implementation
      */
-    open fun unwrap(): Any? {
-        return null
-    }
+    open fun unwrap(): Any
+
+    fun setExceptionHandler(exceptionHandler: ExceptionHandler)
+
+    fun onException(exception: Exception)
+
 }

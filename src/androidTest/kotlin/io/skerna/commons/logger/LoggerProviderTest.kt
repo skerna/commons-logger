@@ -22,17 +22,19 @@
 
 package io.skerna.commons.logger
 
-import io.skerna.commons.logger.Logger
-
 /**
  * Logger provider context, espera que la implementación
  * esepcifica de la plataforma para los casos de prueba retorne
  * un array de los Logger Factory a testear
  */
-expect class LoggerProviderTest() {
+actual class LoggerProviderTest {
     /**
      * Retorna una lista de logger de una plataforma subyacente para ejecutar los test
      * @return List<LoggerFactory>
      */
-    fun targetLoggers(): List<Logger>
+    actual fun targetLoggers(): List<Logger> {
+
+        val listLoggers = mutableListOf<Logger>()
+        return listLoggers
+    }
 }

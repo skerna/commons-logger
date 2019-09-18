@@ -35,7 +35,7 @@ import org.apache.logging.log4j.spi.ExtendedLoggerWrapper
  * A [LogDelegate] which delegates to Apache Log4j 2
  *
  */
-class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDelegate(name) {
+class Log4j2LogDelegate internal constructor(name: String) : LogDelegate {
 
     internal val logger:ExtendedLoggerWrapper
 
@@ -165,21 +165,8 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
         logger.logIfEnabled(FQCN, level, null,FormattedMessage(message, *params), t)
     }
 
-    override fun unwrap(): Any {
+    override fun unwrap(): Any? {
         return logger
-    }
-
-    override fun isLoggable(level: io.skerna.commons.logger.Level): Boolean {
-        if(level == io.skerna.commons.logger.Level.INFO && isInfoEnabled){
-            return true
-        }else if(level == io.skerna.commons.logger.Level.WARNING && isWarnEnabled){
-            return true
-        }else if(level == io.skerna.commons.logger.Level.DEBUG && isDebugEnabled) {
-            return true
-        }else if(level == io.skerna.commons.logger.Level.TRACE && isTraceEnabled){
-            return true
-        }
-        return false
     }
 
     companion object {

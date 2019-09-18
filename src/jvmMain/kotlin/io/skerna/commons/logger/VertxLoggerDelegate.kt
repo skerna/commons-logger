@@ -27,7 +27,7 @@ import io.skerna.commons.logger.LogDelegate
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.core.logging.Logger as VLogger
 
-class VertxLoggerDelegate : LogDelegate {
+class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDelegate(name) {
 
     private val logger: VLogger
 
@@ -43,13 +43,8 @@ class VertxLoggerDelegate : LogDelegate {
     override val isTraceEnabled: Boolean
         get() = logger.isTraceEnabled
 
-    internal constructor(name: String) {
+    init {
         logger = LoggerFactory.getLogger(name)
-    }
-
-    constructor(logger: Any) {
-        this.logger = logger as VLogger
-
     }
 
     override fun fatal(message: Any) {
@@ -141,8 +136,20 @@ class VertxLoggerDelegate : LogDelegate {
         logger.trace(message, t, params)
     }
 
-    override fun unwrap(): Any? {
+    override fun unwrap(): Any {
         return logger
     }
 
+    override fun isLoggable(level: Level): Boolean {
+        if(level == Level.INFO && isInfoEnabled){
+            return true
+        }else if(level == Level.WARNING && isWarnEnabled){
+            return true
+        }else if(level == Level.DEBUG && isDebugEnabled) {
+            return true
+        }else if(level == Level.TRACE && isTraceEnabled){
+            return true
+        }
+        return false
+    }
 }

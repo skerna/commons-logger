@@ -22,36 +22,10 @@
 
 package io.skerna.commons.logger
 
-import kotlin.test.Test
-import kotlin.test.assertTrue
 
-class LoggerContextTest {
-    val loggerPlatformProvider = LoggerProviderTest()
-    @Test
-    fun testContext() {
-        for (i in 0..35) {
-            LoggerContext.enableDebug(true, this::class)
-        }
-        assertTrue(LoggerContext.isOverflowMemory(), "Expected overflow flag true")
+class SLF4JLogDelegateFactory : LogDelegateFactory {
+    override fun createDelegate(name: String): SLF4JLogDelegate {
+        return SLF4JLogDelegate(name)
     }
 
-    @Test
-    fun testDebug() {
-        val logger = LoggerFactory.logger<LoggerContext>()
-        logger.debug("TEST")
-    }
-
-    @Test
-    fun testWithException() {
-        try {
-            for (targetLogger in loggerPlatformProvider.targetLoggers()) {
-                val targetLoggeable = ClassLoggeable(targetLogger)
-                targetLoggeable.executeTestFunction()
-                targetLoggeable.executeTestFunctionWithExceptions()
-            }
-        } catch (ex: Exception) {
-            assertTrue(ex.equals(ExceptionTest::class), "EN JAVA Se espera una exception de tipo ${ExceptionTest::class} pero se encontro $ex")
-        }
-
-    }
 }

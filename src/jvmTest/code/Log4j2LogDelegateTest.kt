@@ -1,6 +1,5 @@
 package io.skerna.commons.logger
 
-import io.skerna.commons.logger.LoggerFactory.logger
 import org.apache.logging.log4j.core.LoggerContext
 import org.junit.Before
 import org.junit.Test
@@ -13,17 +12,18 @@ import kotlin.test.assertTrue
  * project: skerna-reactorLogger created at 26/03/19
  **/
 
-class Slf4Log4j2LogDelegateTest{
+class Log4j2LogDelegateTest{
     private lateinit var appender: TestAppender
-    private lateinit var reactorLogger:SLF4JLogDelegate
+    private lateinit var reactorLogger:Log4j2LogDelegate
 
     @Before
     fun configure(){
         val context = LoggerContext.getContext(false)
         val logger = context.getLogger("io.skerna.commons.logger.Slf4jTest")
         appender = logger.appenders.get("TestAppender") as TestAppender
-        reactorLogger = SLF4JLogDelegate("io.skerna.commons.logger.Slf4jTest")
+        reactorLogger = Log4j2LogDelegate("io.skerna.commons.logger.Slf4jTest")
     }
+
 
     @Test
     fun withArguments(){
@@ -39,7 +39,6 @@ class Slf4Log4j2LogDelegateTest{
 
     @Test
     fun testError(){
-        LoggerFactory.setLogDelegateFactory(SLF4JLogDelegateFactory())
         reactorLogger.error("Error",IllegalStateException("aaa"))
         assertTrue(appender.getLastMessage().message.throwable.javaClass.equals(IllegalStateException::class.java))
 

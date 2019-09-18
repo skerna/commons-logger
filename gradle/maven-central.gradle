@@ -9,10 +9,10 @@ ext {
     publishedGroupId = project.group
     libraryName =  project.name
     artifact = project.name
-    libraryDescription = 'This library provide logger multiplatform.'
+    libraryDescription = 'This library provide slbase multiplatform.'
 
-    siteUrl = 'https://gitlab.com/skerna/libs/commons-logger'
-    gitUrl = 'https://gitlab.com/skerna/libs/commons-logger'
+    siteUrl = 'https://gitlab.com/skerna/libs/commons-slbase'
+    gitUrl = 'https://gitlab.com/skerna/libs/commons-slbase'
 
 
     developerId = 'ronfravi'

@@ -22,9 +22,8 @@
 
 package io.skerna.commons.logger
 
-class ExceptionTest : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+class Log4j2LogDelegateFactory : LogDelegateFactory {
+    override fun createDelegate(name: String): LogDelegate {
+        return Log4j2LogDelegate(name)
+    }
 }

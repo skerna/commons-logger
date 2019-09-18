@@ -23,21 +23,18 @@
 package io.skerna.commons.logger
 
 
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.message.FormattedMessage
-import org.apache.logging.log4j.message.Message
-import org.apache.logging.log4j.spi.ExtendedLogger
-import org.apache.logging.log4j.spi.ExtendedLoggerWrapper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.slf4j.spi.LocationAwareLogger.*
 
 
-/**
- * A [LogDelegate] which delegates to Apache Log4j 2
- *
- */
-class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDelegate(name) {
+class SLF4JLogDelegate : LogDelegate {
+    private val FQCN = Logger::class.java.canonicalName
+    protected val logger: Logger
 
-    internal val logger:ExtendedLoggerWrapper
+    constructor(name: String) {
+        logger = LoggerFactory.getLogger(name)
+    }
 
     override val isWarnEnabled: Boolean
         get() = logger.isWarnEnabled || LoggerContext.isWarnEnabled()
@@ -51,140 +48,144 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     override val isTraceEnabled: Boolean
         get() = logger.isTraceEnabled || LoggerContext.isTraceEnabled()
 
-    init {
-        configurateDefaultLogger()
-        val _logger = LogManager.getLogger(name) as ExtendedLogger
-        logger = ExtendedLoggerWrapper(_logger,name,_logger.getMessageFactory())
-    }
-
-    private fun configurateDefaultLogger() {
-
-    }
-
     override fun fatal(message: Any) {
-        log(Level.FATAL, message)
+        log(ERROR_INT, message)
     }
 
     override fun fatal(message: Any, t: Throwable) {
-        log(Level.FATAL, message, t)
+        log(ERROR_INT, message, t)
     }
 
     override fun error(message: Any) {
-        log(Level.ERROR, message)
+        log(ERROR_INT, message)
     }
 
     override fun error(message: Any, vararg params: Any) {
-        log(Level.ERROR, message.toString(), *params)
+        log(ERROR_INT, message, null, params)
     }
 
     override fun error(message: Any, t: Throwable) {
-        log(Level.ERROR, message, t)
+        log(ERROR_INT, message, t)
     }
 
     override fun error(message: Any, t: Throwable, vararg params: Any) {
-        log(Level.ERROR, message.toString(), t, *params)
+        log(ERROR_INT, message, t, params)
     }
 
     override fun warn(message: Any) {
-        log(Level.WARN, message)
+        log(WARN_INT, message)
     }
 
     override fun warn(message: Any, vararg params: Any) {
-        log(Level.WARN, message.toString(), *params)
+        log(WARN_INT, message, null, params)
     }
 
     override fun warn(message: Any, t: Throwable) {
-        log(Level.WARN, message, t)
+        log(WARN_INT, message, t)
     }
 
     override fun warn(message: Any, t: Throwable, vararg params: Any) {
-        log(Level.WARN, message.toString(), t, *params)
+        log(WARN_INT, message, t, params)
     }
 
     override fun info(message: Any) {
-        logger.info(message)
+        log(INFO_INT, message)
     }
 
     override fun info(message: Any, vararg params: Any) {
-        log(Level.INFO, message.toString(), *params)
+        log(INFO_INT, message, null, params)
     }
 
     override fun info(message: Any, t: Throwable) {
-        log(Level.INFO, message, t)
+        log(INFO_INT, message, t)
     }
 
     override fun info(message: Any, t: Throwable, vararg params: Any) {
-        log(Level.INFO, message.toString(), t, *params)
+        log(INFO_INT, message, t, params)
     }
 
     override fun debug(message: Any) {
-        log(Level.DEBUG, message)
+        log(DEBUG_INT, message)
     }
 
     override fun debug(message: Any, vararg params: Any) {
-        log(Level.DEBUG, message.toString(), *params)
+        log(DEBUG_INT, message, null, params)
     }
 
     override fun debug(message: Any, t: Throwable) {
-        log(Level.DEBUG, message, t)
+        log(DEBUG_INT, message, t)
     }
 
     override fun debug(message: Any, t: Throwable, vararg params: Any) {
-        log(Level.DEBUG, message.toString(), t, *params)
+        log(DEBUG_INT, message, t, params)
     }
 
     override fun trace(message: Any) {
-        log(Level.TRACE, message)
+        log(TRACE_INT, message)
     }
 
     override fun trace(message: Any, vararg params: Any) {
-        log(Level.TRACE, message.toString(), *params)
+        log(TRACE_INT, message, null, params)
     }
 
     override fun trace(message: Any, t: Throwable) {
-        log(Level.TRACE, message.toString(), t)
+        log(TRACE_INT, message, t)
     }
 
     override fun trace(message: Any, t: Throwable, vararg params: Any) {
-        log(Level.TRACE, message.toString(), t, *params)
+        log(TRACE_INT, message, t, params)
     }
 
-    private fun log(level: Level, message: Any, t: Throwable? = null) {
-        if (message is Message) {
-            logger.logIfEnabled(FQCN, level, null, message, t)
-        } else {
-            logger.logIfEnabled(FQCN, level, null, message, t)
+    private fun log(level: Int, message: Any) {
+        log(level, message, null)
+    }
+
+    private fun log(level: Int, message: Any, t: Throwable?) {
+        log(level, message, t, arrayOf(""))
+    }
+
+    private fun log(level: Int, message: Any?, t: Throwable?, params:Array<out Any?>) {
+        val msg = message?.toString() ?: "NULL"
+        
+        if (!params.isEmpty() && t != null) {
+            when (level) {
+                TRACE_INT -> logger.trace(msg, *params,t)
+                DEBUG_INT -> logger.debug(msg, *params,t)
+                INFO_INT -> logger.info(msg, *params,t)
+                WARN_INT -> logger.warn(msg, *params,t)
+                ERROR_INT -> logger.error(msg, *params,t)
+                else -> throw IllegalArgumentException("Unknown log level $level")
+            }
+        } else if (params.isEmpty() && t != null) {
+            when (level) {
+                TRACE_INT -> logger.trace(msg, t)
+                DEBUG_INT -> logger.debug(msg, t)
+                INFO_INT -> logger.info(msg, t)
+                WARN_INT -> logger.warn(msg, t)
+                ERROR_INT -> logger.error(msg, t)
+                else -> throw IllegalArgumentException("Unknown log level $level")
+            }
+        }else{
+            when (level) {
+
+                TRACE_INT -> logger.trace(msg,*params)
+                DEBUG_INT -> logger.debug(msg,*params)
+                INFO_INT -> logger.info(msg,*params)
+                WARN_INT -> logger.warn(msg,*params)
+                ERROR_INT -> logger.error(msg,*params)
+                else -> throw IllegalArgumentException("Unknown log level $level")
+            }
         }
-    }
 
-    private fun log(level: Level, message: String, vararg params: Any) {
-        logger.logIfEnabled(FQCN, level,null, message, *params)
-    }
 
-    private fun log(level: Level, message: String, t: Throwable, vararg params: Any) {
-        logger.logIfEnabled(FQCN, level, null,FormattedMessage(message, *params), t)
     }
-
-    override fun unwrap(): Any {
+    fun String?.securedMessage(): String {
+        if(isNullOrBlank()){
+            return "NULL";
+        }
+        return this!!;
+    }
+    override fun unwrap(): Any? {
         return logger
     }
-
-    override fun isLoggable(level: io.skerna.commons.logger.Level): Boolean {
-        if(level == io.skerna.commons.logger.Level.INFO && isInfoEnabled){
-            return true
-        }else if(level == io.skerna.commons.logger.Level.WARNING && isWarnEnabled){
-            return true
-        }else if(level == io.skerna.commons.logger.Level.DEBUG && isDebugEnabled) {
-            return true
-        }else if(level == io.skerna.commons.logger.Level.TRACE && isTraceEnabled){
-            return true
-        }
-        return false
-    }
-
-    companion object {
-        internal val FQCN = Logger::class.java.canonicalName
-    }
-
-
 }
