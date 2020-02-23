@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2019  SKERNA
+ * Copyright (c)  2020  SKERNA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,6 +18,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package io.skerna.commons.logger
@@ -28,7 +29,8 @@ import org.slf4j.LoggerFactory
 import org.slf4j.spi.LocationAwareLogger.*
 
 
-class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelegate(name) {
+class SLF4JLogDelegate internal constructor(name: String,
+                                            configuration: LoggerConfiguration) : AbstractLoggerDelegate(name,configuration) {
     private val FQCN = Logger::class.java.canonicalName
     protected val logger: Logger
 
@@ -61,7 +63,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun error(message: Any, vararg params: Any) {
-        log(ERROR_INT, message, null, params)
+        log(ERROR_INT, message, null, *params)
     }
 
     override fun error(message: Any, t: Throwable) {
@@ -69,7 +71,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun error(message: Any, t: Throwable, vararg params: Any) {
-        log(ERROR_INT, message, t, params)
+        log(ERROR_INT, message, t, *params)
     }
 
     override fun warn(message: Any) {
@@ -77,7 +79,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun warn(message: Any, vararg params: Any) {
-        log(WARN_INT, message, null, params)
+        log(WARN_INT, message, null, *params)
     }
 
     override fun warn(message: Any, t: Throwable) {
@@ -85,7 +87,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun warn(message: Any, t: Throwable, vararg params: Any) {
-        log(WARN_INT, message, t, params)
+        log(WARN_INT, message, t, *params)
     }
 
     override fun info(message: Any) {
@@ -93,7 +95,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun info(message: Any, vararg params: Any) {
-        log(INFO_INT, message, null, params)
+        log(INFO_INT, message, null, *params)
     }
 
     override fun info(message: Any, t: Throwable) {
@@ -101,7 +103,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun info(message: Any, t: Throwable, vararg params: Any) {
-        log(INFO_INT, message, t, params)
+        log(INFO_INT, message, t, *params)
     }
 
     override fun debug(message: Any) {
@@ -109,7 +111,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun debug(message: Any, vararg params: Any) {
-        log(DEBUG_INT, message, null, params)
+        log(DEBUG_INT, message, null, *params)
     }
 
     override fun debug(message: Any, t: Throwable) {
@@ -117,7 +119,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun debug(message: Any, t: Throwable, vararg params: Any) {
-        log(DEBUG_INT, message, t, params)
+        log(DEBUG_INT, message, t, *params)
     }
 
     override fun trace(message: Any) {
@@ -125,7 +127,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun trace(message: Any, vararg params: Any) {
-        log(TRACE_INT, message, null, params)
+        log(TRACE_INT, message, null, *params)
     }
 
     override fun trace(message: Any, t: Throwable) {
@@ -133,7 +135,7 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
     }
 
     override fun trace(message: Any, t: Throwable, vararg params: Any) {
-        log(TRACE_INT, message, t, params)
+        log(TRACE_INT, message, t, *params)
     }
 
     private fun log(level: Int, message: Any) {
@@ -144,10 +146,10 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
         log(level, message, t, arrayOf(""))
     }
 
-    private fun log(level: Int, message: Any?, t: Throwable?, params:Array<out Any?>) {
+    private fun log(level: Int, message: Any?, t: Throwable?, vararg params:Any) {
         val msg = message?.toString() ?: "NULL"
         
-        if (!params.isEmpty() && t != null) {
+        if (params.isNotEmpty() && t != null) {
             when (level) {
                 TRACE_INT -> logger.trace(msg, *params,t)
                 DEBUG_INT -> logger.debug(msg, *params,t)
@@ -189,16 +191,4 @@ class SLF4JLogDelegate internal constructor(name: String) : AbstractLoggerDelega
         return logger
     }
 
-    override fun isLoggable(level: Level): Boolean {
-        if(level == Level.INFO && isInfoEnabled){
-            return true
-        }else if(level == Level.WARNING && isWarnEnabled){
-            return true
-        }else if(level == Level.DEBUG && isDebugEnabled) {
-            return true
-        }else if(level == Level.TRACE && isTraceEnabled){
-            return true
-        }
-        return false
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2019  SKERNA
+ * Copyright (c)  2020  SKERNA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,6 +18,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package io.skerna.commons.logger
@@ -92,10 +93,19 @@ actual object LoggerFactory {
 
     @JvmStatic
     actual fun logger(name: String): Logger {
+        return logger(name, LoggerConfiguration.instanceGlobalContext)
+    }
+    /**
+     * returns new logger with specific configuration
+     * if logger doest not exists a new logger is created using name and configuration
+     * pass as parameters
+     * @return Logger
+     */
+    actual fun logger(name: String, configuration: LoggerConfiguration): Logger {
         var logger: Logger? = loggers[name]
 
         if (logger == null) {
-            val delegate = delegateFactory!!.createDelegate(name)
+            val delegate = delegateFactory!!.createDelegate(name,LoggerConfiguration.instanceGlobalContext)
 
             logger = Logger(delegate)
 
@@ -107,6 +117,8 @@ actual object LoggerFactory {
         }
         return logger
     }
+
+
 
     @JvmStatic
     actual fun removeLogger(name: String) {
@@ -125,6 +137,7 @@ actual object LoggerFactory {
     actual inline fun <reified T> logger(): Logger {
         return logger(T::class)
     }
+
 
 
 }

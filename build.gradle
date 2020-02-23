@@ -26,8 +26,8 @@ plugins {
     id 'org.jetbrains.kotlin.multiplatform'
     id "com.jfrog.bintray"
     id 'com.moowork.node'
+    id 'org.jetbrains.dokka'
 }
-
 repositories {
     jcenter()
     mavenCentral()
@@ -72,14 +72,14 @@ android {
 }
 
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-    api 'org.jetbrains.kotlin:kotlin-reflect'
-    api("io.skerna.libs:commons-sansi-jvm:$skerna_version")
-    api 'com.jraska:console:1.0.0'
-    api 'com.jakewharton.timber:timber:4.7.1'
-}
+//dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+//    api 'org.jetbrains.kotlin:kotlin-reflect'
+//    api("io.skerna.libs:commons-sansi-jvm:$skerna_sansi_version")
+//    api 'com.jraska:console:1.0.0'
+//    api 'com.jakewharton.timber:timber:4.7.1'
+//}
 
 kotlin {
     jvm(){
@@ -92,17 +92,19 @@ kotlin {
             jvmTarget = "1.6"
         }
     }
-   // android()
-    //js()
+    android(){
+        publishLibraryVariants("release", "debug")
+    }
+    js()
     targets {
         fromPreset(presets.jvm,'jvm')
-        //fromPreset(presets.android, 'android')
+        fromPreset(presets.android, 'android')
     }
     sourceSets {
         commonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                api("io.skerna.libs:commons-sansi-metadata:$skerna_version")
+                api("io.skerna.libs:commons-sansi-metadata:$skerna_sansi_version")
             }
         }
         commonTest {
@@ -115,7 +117,7 @@ kotlin {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
                 api 'org.jetbrains.kotlin:kotlin-reflect'
-                api("io.skerna.libs:commons-sansi-jvm:$skerna_version")
+                api("io.skerna.libs:commons-sansi-jvm:$skerna_sansi_version")
                 compileOnly "org.slf4j:slf4j-simple:$slf4j_version"
                 compileOnly "org.slf4j:slf4j-api:$slf4j_version"
                 compileOnly "org.apache.logging.log4j:log4j-api:$log4j_version"
@@ -139,7 +141,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                api("io.skerna.libs:commons-sansi-js:$skerna_version")
+                api("io.skerna.libs:commons-sansi-js:$skerna_sansi_version")
             }
         }
         jsTest {
@@ -152,7 +154,7 @@ kotlin {
         androidMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                api("io.skerna.libs:commons-sansi-jvm:$skerna_version")
+                api("io.skerna.libs:commons-sansi-jvm:$skerna_sansi_version")
                 api 'com.jraska:console:1.0.0'
                 api 'com.jakewharton.timber:timber:4.7.1'
             }
@@ -164,7 +166,7 @@ kotlin {
         }
     }
 }
-/**
+
 compileKotlinJs {
     kotlinOptions.metaInfo = true
     kotlinOptions.sourceMap = true
@@ -176,8 +178,12 @@ compileTestKotlinJs {
     kotlinOptions.sourceMap = true
     kotlinOptions.moduleKind = 'umd'
     kotlinOptions.sourceMapEmbedSources = 'always'
-}**/
+}
 
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile.class).all {
     kotlinOptions {
@@ -189,7 +195,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         apiVersion = "1.3"
         languageVersion = "1.3"
-        jvmTarget = "1.8"
+        jvmTarget = "1.6"
     }
 }
 tasks.withType(Test) {
@@ -208,3 +214,4 @@ tasks.withType(Test) {
 //apply from: rootProject.file("gradle/test-mocha-js.gradle")
 
 apply from: rootProject.file("gradle/publish.gradle")
+apply from: project.file("gradle/wrapper.gradle")

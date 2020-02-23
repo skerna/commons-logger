@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2019  SKERNA
+ * Copyright (c)  2020  SKERNA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,6 +18,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package io.skerna.commons.logger
@@ -25,9 +26,8 @@ package io.skerna.commons.logger
 import io.skerna.commons.logger.LogDelegate
 import io.skerna.commons.logger.LoggerContext
 
-class ConsoleLogDelegate constructor(name: String) : LogDelegate {
-    private val name = name
-
+class ConsoleLogDelegate constructor(name: String,
+                                     configuration: LoggerConfiguration) : AbstractLoggerDelegate(name,configuration) {
     override val isWarnEnabled: Boolean
         get() = LoggerContext.isWarnEnabled()
     override val isInfoEnabled: Boolean
@@ -133,4 +133,7 @@ class ConsoleLogDelegate constructor(name: String) : LogDelegate {
         return "${this.name} : $message, cause $t"
     }
 
+    override fun unwrap(): Any {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2019  SKERNA
+ * Copyright (c)  2020  SKERNA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,6 +18,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package io.skerna.commons.logger
@@ -35,7 +36,8 @@ import org.apache.logging.log4j.spi.ExtendedLoggerWrapper
  * A [LogDelegate] which delegates to Apache Log4j 2
  *
  */
-class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDelegate(name) {
+class Log4j2LogDelegate internal constructor(name: String,
+                                             configuration: LoggerConfiguration) : AbstractLoggerDelegate(name, configuration) {
 
     internal val logger:ExtendedLoggerWrapper
 
@@ -62,15 +64,15 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun fatal(message: Any) {
-        log(Level.FATAL, message)
+        log(Level.FATAL, message.toString())
     }
 
     override fun fatal(message: Any, t: Throwable) {
-        log(Level.FATAL, message, t)
+        log(Level.FATAL, message.toString(), t)
     }
 
     override fun error(message: Any) {
-        log(Level.ERROR, message)
+        log(Level.ERROR, message.toString())
     }
 
     override fun error(message: Any, vararg params: Any) {
@@ -78,7 +80,7 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun error(message: Any, t: Throwable) {
-        log(Level.ERROR, message, t)
+        log(Level.ERROR, message.toString(), t)
     }
 
     override fun error(message: Any, t: Throwable, vararg params: Any) {
@@ -86,7 +88,7 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun warn(message: Any) {
-        log(Level.WARN, message)
+        log(Level.WARN, message.toString())
     }
 
     override fun warn(message: Any, vararg params: Any) {
@@ -94,7 +96,7 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun warn(message: Any, t: Throwable) {
-        log(Level.WARN, message, t)
+        log(Level.WARN, message.toString(), t)
     }
 
     override fun warn(message: Any, t: Throwable, vararg params: Any) {
@@ -110,7 +112,7 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun info(message: Any, t: Throwable) {
-        log(Level.INFO, message, t)
+        log(Level.INFO, message.toString(), t)
     }
 
     override fun info(message: Any, t: Throwable, vararg params: Any) {
@@ -118,7 +120,7 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun debug(message: Any) {
-        log(Level.DEBUG, message)
+        log(Level.DEBUG, message.toString())
     }
 
     override fun debug(message: Any, vararg params: Any) {
@@ -126,7 +128,7 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun debug(message: Any, t: Throwable) {
-        log(Level.DEBUG, message, t)
+        log(Level.DEBUG, message.toString(), t)
     }
 
     override fun debug(message: Any, t: Throwable, vararg params: Any) {
@@ -134,7 +136,7 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
     }
 
     override fun trace(message: Any) {
-        log(Level.TRACE, message)
+        log(Level.TRACE, message.toString())
     }
 
     override fun trace(message: Any, vararg params: Any) {
@@ -149,38 +151,22 @@ class Log4j2LogDelegate internal constructor(name: String) : AbstractLoggerDeleg
         log(Level.TRACE, message.toString(), t, *params)
     }
 
-    private fun log(level: Level, message: Any, t: Throwable? = null) {
-        if (message is Message) {
-            logger.logIfEnabled(FQCN, level, null, message, t)
-        } else {
-            logger.logIfEnabled(FQCN, level, null, message, t)
-        }
+    private fun log(level: Level, message: String, t: Throwable? = null) {
+        logger.log(level,message,t)
     }
 
     private fun log(level: Level, message: String, vararg params: Any) {
-        logger.logIfEnabled(FQCN, level,null, message, *params)
+        logger.log(level,message,*params)
     }
 
     private fun log(level: Level, message: String, t: Throwable, vararg params: Any) {
-        logger.logIfEnabled(FQCN, level, null,FormattedMessage(message, *params), t)
+        logger.log(level,message,*params,t)
     }
 
     override fun unwrap(): Any {
         return logger
     }
 
-    override fun isLoggable(level: io.skerna.commons.logger.Level): Boolean {
-        if(level == io.skerna.commons.logger.Level.INFO && isInfoEnabled){
-            return true
-        }else if(level == io.skerna.commons.logger.Level.WARNING && isWarnEnabled){
-            return true
-        }else if(level == io.skerna.commons.logger.Level.DEBUG && isDebugEnabled) {
-            return true
-        }else if(level == io.skerna.commons.logger.Level.TRACE && isTraceEnabled){
-            return true
-        }
-        return false
-    }
 
     companion object {
         internal val FQCN = Logger::class.java.canonicalName

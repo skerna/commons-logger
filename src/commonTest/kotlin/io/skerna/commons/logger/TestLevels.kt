@@ -23,12 +23,33 @@
 
 package io.skerna.commons.logger
 
-/**
- * @author Ronald Cárdenas
- **/
-interface AnsiWritter{
-    /**
-     * Write on ansi writter format
-     */
-    fun write(message: String)
+import kotlin.test.Test
+
+class TestLevels {
+    val logger:Logger
+    init{
+        LoggerConfiguration.instanceGlobalContext.enableAll()
+        logger = LoggerFactory.logger<TestLevels>();
+    }
+
+    @Test
+    fun testInfo(){
+        logger.atInfo().log("Hola {}","ronald")
+    }
+    @Test
+    fun testDebug(){
+        logger.atDebug().log("Hola")
+    }
+    @Test
+    fun testWarn(){
+        logger.atWarning().log("Hola")
+    }
+    @Test
+    fun testTrace(){
+        logger.atTrace().log("Hola")
+    }
+    @Test
+    fun testError(){
+        logger.atError().log("Hola")
+    }
 }

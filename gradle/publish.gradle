@@ -2,6 +2,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
+apply from: project.rootProject.file('gradle/maven.gradle')
 apply from: project.rootProject.file('gradle/maven-central.gradle')
 
 task stubJavadoc(type: Jar) {
@@ -9,38 +10,44 @@ task stubJavadoc(type: Jar) {
 }
 
 
-
-publishing {
-    publications {
-        aar(MavenPublication) {
-            groupId = project.group
-            artifactId "${project.name}-android"
-            version = project.version
-            artifact("$buildDir/outputs/aar/bar-release.aar")
-            pom.withXml {
-                def dependenciesNode = asNode().appendNode('dependencies')
-                generatePomDeps(configurations.androidApi,dependenciesNode)
-                generatePomDeps(configurations.androidImplementation,dependenciesNode)
-            }
-        }
-    }
-    publications.all {
-        pom.withXml(configureMavenCentralMetadata)
-    }
-    afterEvaluate {
-        kotlin.targets.forEach { target ->
-            def targetPublication = publications.findByName(target.name)
-            if (targetPublication != null) {
-                targetPublication.artifact stubJavadoc
-            }
-        }
+task listConfigs(){
+    configurations.forEach{
+        println(it)
     }
 }
+//publishing {
+//    publications {
+//        aar(MavenPublication) {
+//            groupId = project.group
+//            artifactId "${project.name}-android"
+//            version = project.version
+//            artifact("$buildDir/outputs/aar/commons-logger-release.aar")
+//            pom.withXml {
+//                def dependenciesNode = asNode().appendNode('dependencies')
+//                generatePomDeps(configurations.androidMainApi,dependenciesNode)
+//                generatePomDeps(configurations.androidMainImplementation,dependenciesNode)
+//            }
+//        }
+//    }
+//    publications.all {
+//        pom.withXml(configureMavenCentralMetadata)
+//    }
+//    afterEvaluate {
+//        kotlin.targets.forEach { target ->
+//            def targetPublication = publications.findByName(target.name)
+//            if (targetPublication != null) {
+//                targetPublication.artifact stubJavadoc
+//            }
+//        }
+//    }
+//}
 
 
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    user = BINTRAY_USER
+    key = BINTRAY_KEY
+
+    print("USER BINTRAY $BINTRAY_USER" )
     override = true // for multi-platform Kotlin/Native publishing
     configurations = ['archives']
     pkg {
@@ -59,6 +66,8 @@ bintray {
         }
     }
 }
+
+
 // TODO :kludge this is required for K/N publishing
 bintrayUpload.dependsOn publishToMavenLocal
 

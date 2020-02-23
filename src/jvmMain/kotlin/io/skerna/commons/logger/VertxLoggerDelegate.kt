@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2019  SKERNA
+ * Copyright (c)  2020  SKERNA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,6 +18,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package io.skerna.commons.logger
@@ -27,7 +28,8 @@ import io.skerna.commons.logger.LogDelegate
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.core.logging.Logger as VLogger
 
-class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDelegate(name) {
+class VertxLoggerDelegate internal constructor(name: String,
+                                               configuration: LoggerConfiguration) : AbstractLoggerDelegate(name,configuration) {
 
     private val logger: VLogger
 
@@ -60,7 +62,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun error(message: Any, vararg params: Any) {
-        logger.error(message, params)
+        logger.error(message, *params)
     }
 
     override fun error(message: Any, t: Throwable) {
@@ -68,7 +70,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun error(message: Any, t: Throwable, vararg params: Any) {
-        logger.error(message, t, params)
+        logger.error(message, t, *params)
     }
 
     override fun warn(message: Any) {
@@ -76,7 +78,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun warn(message: Any, vararg params: Any) {
-        logger.warn(message, params)
+        logger.warn(message, *params)
     }
 
     override fun warn(message: Any, t: Throwable) {
@@ -84,7 +86,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun warn(message: Any, t: Throwable, vararg params: Any) {
-        logger.warn(message, t, params)
+        logger.warn(message, t, *params)
     }
 
     override fun info(message: Any) {
@@ -92,7 +94,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun info(message: Any, vararg params: Any) {
-        logger.info(message, params)
+        logger.info(message, *params)
     }
 
     override fun info(message: Any, t: Throwable) {
@@ -100,7 +102,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun info(message: Any, t: Throwable, vararg params: Any) {
-        logger.info(message, t, params)
+        logger.info(message, t, *params)
     }
 
     override fun debug(message: Any) {
@@ -108,7 +110,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun debug(message: Any, vararg params: Any) {
-        logger.debug(message, params)
+        logger.debug(message, *params)
     }
 
     override fun debug(message: Any, t: Throwable) {
@@ -116,7 +118,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun debug(message: Any, t: Throwable, vararg params: Any) {
-        logger.debug(message, t, params)
+        logger.debug(message, t, *params)
     }
 
     override fun trace(message: Any) {
@@ -124,7 +126,7 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun trace(message: Any, vararg params: Any) {
-        logger.trace(message, params)
+        logger.trace(message, *params)
 
     }
 
@@ -133,23 +135,11 @@ class VertxLoggerDelegate internal constructor(name: String) : AbstractLoggerDel
     }
 
     override fun trace(message: Any, t: Throwable, vararg params: Any) {
-        logger.trace(message, t, params)
+        logger.trace(message, t, *params)
     }
 
     override fun unwrap(): Any {
         return logger
     }
 
-    override fun isLoggable(level: Level): Boolean {
-        if(level == Level.INFO && isInfoEnabled){
-            return true
-        }else if(level == Level.WARNING && isWarnEnabled){
-            return true
-        }else if(level == Level.DEBUG && isDebugEnabled) {
-            return true
-        }else if(level == Level.TRACE && isTraceEnabled){
-            return true
-        }
-        return false
-    }
 }

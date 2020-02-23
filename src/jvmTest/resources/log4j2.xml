@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="ERROR" packages="io.skerna.commons.logger">
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logPath">target/cucumber-logs</Property>
+        <Property name="rollingFileName">cucumber</Property>
+    </Properties>
     <Appenders>
-        <Console name="console" target="SYSTEM_OUT" follow="true">
-            <!-- <PatternLayout
-                     pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />-->
-            <PatternLayout
-                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{[%-5level]}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green bold, DEBUG=blue bold, TRACE=blue bold}--%style{%-28.28t{1}}{magenta} %style{%-20.30c{1.} %style{[%3.3L]}: }{cyan,bold} %msg%n"/>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}"/>
         </Console>
-        <TestAppender name="TestAppender">
-            <PatternLayout
-                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{[%-5level]}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green bold, DEBUG=blue bold, TRACE=blue bold}--%style{%-28.28t{1}}{magenta} %style{%-20.30c{1.} %style{[%3.3L]}: }{cyan,bold} %msg%n"/>
-        </TestAppender>
     </Appenders>
     <Loggers>
-        <Root level="error" additivity="false">
+        <Root level="DEBUG" additivity="false">
             <AppenderRef ref="console"/>
         </Root>
-        <Logger name="io.skerna.commons.logger" level="ALL" additivity="false"  includeLocation="true">
-            <AppenderRef ref="console"></AppenderRef>
-            <AppenderRef ref="TestAppender" level="All"/>
-        </Logger>
     </Loggers>
 </Configuration>
