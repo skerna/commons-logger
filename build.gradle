@@ -29,6 +29,7 @@ plugins {
     id 'org.jetbrains.dokka'
 }
 repositories {
+    mavenLocal()
     jcenter()
     mavenCentral()
     google()
@@ -80,7 +81,6 @@ android {
 //    api 'com.jraska:console:1.0.0'
 //    api 'com.jakewharton.timber:timber:4.7.1'
 //}
-
 kotlin {
     jvm(){
         compilations.main.kotlinOptions {
@@ -212,6 +212,5 @@ tasks.withType(Test) {
 
 //apply from: rootProject.file("gradle/node.gradle")
 //apply from: rootProject.file("gradle/test-mocha-js.gradle")
-
-apply from: rootProject.file("gradle/publish.gradle")
-apply from: project.file("gradle/wrapper.gradle")
+apply from: project.file("gradle/configuration.gradle")
+apply from: project.file("gradle/publish.gradle")

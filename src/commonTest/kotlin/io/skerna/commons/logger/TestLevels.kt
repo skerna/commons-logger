@@ -24,6 +24,8 @@
 package io.skerna.commons.logger
 
 import kotlin.test.Test
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class TestLevels {
     val logger:Logger
@@ -32,24 +34,51 @@ class TestLevels {
         logger = LoggerFactory.logger<TestLevels>();
     }
 
+    private fun getLoggers(name:String):List<Logger>{
+        return LoggProvider.getLoggersFactories().map {
+            val delegate  = it.createDelegate(name, LoggerConfiguration.instanceGlobalContext)
+            val logger = Logger(delegate)
+            logger
+        }
+    }
+    @ExperimentalTime
     @Test
     fun testInfo(){
-        logger.atInfo().log("Hola {}","ronald")
+        getLoggers("test").forEach { logger ->
+            val time = measureTime { logger.atInfo().log("Info Test {}","ronald") }
+            println("Time -> " + time)
+        }
     }
+    @ExperimentalTime
     @Test
     fun testDebug(){
-        logger.atDebug().log("Hola")
+        getLoggers("test").forEach { logger ->
+            val time = measureTime { logger.atDebug().log("Debug Test {}","ronald") }
+            println("Time -> " + time)
+        }
     }
+    @ExperimentalTime
     @Test
     fun testWarn(){
-        logger.atWarning().log("Hola")
+        getLoggers("test").forEach { logger ->
+            val time = measureTime { logger.atWarning().log("Warn Test {}","ronald") }
+            println("Time -> " + time)
+        }
     }
+    @ExperimentalTime
     @Test
     fun testTrace(){
-        logger.atTrace().log("Hola")
+        getLoggers("test").forEach { logger ->
+            val time = measureTime { logger.atError().log("Trace Test {}","ronald") }
+            println("Time -> " + time)
+        }
     }
+    @ExperimentalTime
     @Test
-    fun testError(){
-        logger.atError().log("Hola")
+    fun testError() {
+        getLoggers("test").forEach { logger ->
+            val time = measureTime { logger.atError { log("test") } }
+            println("Time -> " + time)
+        }
     }
 }
